@@ -7,7 +7,7 @@ from mqtt_adapter import MQTT
 # Setup pins
 Pin = machine.Pin
 led = Pin("LED", Pin.OUT)
-photoresistor = Pin(16, Pin.IN)
+photoresistor = machine.ADC(Pin(27, Pin.IN))
 
 # Variables
 mqtt_client = MQTT()
@@ -26,6 +26,10 @@ def led_toggle(value):
     else:
         led.value(value)
 
+
+def get_photoresistor_value():
+    photoresistor_value = photoresistor.read_u16()
+    print("Photoresistor value: ", photoresistor_value)
 
 # def send_data_to_endpoint(temperature, humidity):
 #     time.sleep(1)
@@ -56,6 +60,7 @@ def main():
     led_toggle(1)
     time.sleep(2)
     led_toggle(0)
+    get_photoresistor_value()
    
 
 
