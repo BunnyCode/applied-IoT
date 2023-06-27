@@ -43,14 +43,14 @@ def get_photoresistor_value():
 #         print(f"Failed to publish message: {e}")
 
 
-# # Read DHT11 sensor
-# def dht_sensor():
-#     import dht
-#     d = dht.DHT11(Pin(2))
-#     d.measure()
-#     print("Temperature: ", d.temperature())
-#     print("Humidity: ", d.humidity())
-#     send_data_to_endpoint(d.temperature(), d.humidity())
+# Read DHT11 sensor
+def dht_sensor():
+    import dht
+    d = dht.DHT11(Pin(13))
+    d.measure()
+    print("Temperature: ", d.temperature())
+    print("Humidity: ", d.humidity())
+    # send_data_to_endpoint(d.temperature(), d.humidity())
 
 
 # Main loop
@@ -61,6 +61,7 @@ def main():
     time.sleep(2)
     led_toggle(0)
     get_photoresistor_value()
+    dht_sensor()
    
 
 
