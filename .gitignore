@@ -1,0 +1,4 @@
+*.code-workspace
+*.vscode
+.picowgo
+project_secrets.py
