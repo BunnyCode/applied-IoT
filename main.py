@@ -3,6 +3,7 @@ import machine
 import time
 import project_secrets
 from mqtt_adapter import MQTT
+from stemma_soil_sensor import StemmaSoilSensor
 
 # Setup pins
 Pin = machine.Pin
@@ -28,8 +29,8 @@ def led_toggle(value):
 
 
 def get_photoresistor_value():
-    photoresistor_value = photoresistor.read_u16()
-    print("Photoresistor value: ", photoresistor_value)
+    photoresistor_value = photoresistor.read_u16() / 65535 * 100
+    print("Photoresistor value: ", photoresistor_value ,"%")
 
 # def send_data_to_endpoint(temperature, humidity):
 #     time.sleep(1)
@@ -52,6 +53,19 @@ def dht_sensor():
     print("Humidity: ", d.humidity())
     # send_data_to_endpoint(d.temperature(), d.humidity())
 
+def soil_sensor():
+    SDA_PIN = Pin(14) # update this
+    SCL_PIN = Pin(15) # update this
+    i2c = machine.I2C(1, sda=SDA_PIN, scl=SCL_PIN, freq=400000)
+    seesaw = StemmaSoilSensor(i2c)
+
+    # get moisture
+    moisture = seesaw.get_moisture()
+
+    # get temperature
+    temperature = seesaw.get_temp()
+    print("", moisture)
+
 def blink_sequence():
     time.sleep(1)
     led_toggle(1)
@@ -61,14 +75,14 @@ def blink_sequence():
     led_toggle(1)
     time.sleep(2)
     led_toggle(0)   
-
+ 
 # Main loop
 def main():
     blink_sequence()
     # mqtt_client.connect()
     get_photoresistor_value()
     dht_sensor()
-   
+    soil_sensor()
 
 
 if __name__ == "__main__":
