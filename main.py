@@ -59,7 +59,7 @@ def main():
     time.sleep(2)
     led_toggle(1)
     time.sleep(2)
-    led_toggle(0)
+    led_toggle(0)   
     get_photoresistor_value()
     dht_sensor()
    
