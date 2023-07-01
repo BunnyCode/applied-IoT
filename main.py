@@ -46,20 +46,26 @@ def get_photoresistor_value():
 # Read DHT11 sensor
 def dht_sensor():
     import dht
-    d = dht.DHT11(Pin(13))
+    d = dht.DHT11(Pin(11))
     d.measure()
     print("Temperature: ", d.temperature())
     print("Humidity: ", d.humidity())
     # send_data_to_endpoint(d.temperature(), d.humidity())
 
-
-# Main loop
-def main():
-    # mqtt_client.connect()
-    time.sleep(2)
+def blink_sequence():
+    time.sleep(1)
+    led_toggle(1)
+    time.sleep(1)
+    led_toggle(0)
+    time.sleep(1)
     led_toggle(1)
     time.sleep(2)
     led_toggle(0)   
+
+# Main loop
+def main():
+    blink_sequence()
+    # mqtt_client.connect()
     get_photoresistor_value()
     dht_sensor()
    
