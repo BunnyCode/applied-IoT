@@ -11,7 +11,7 @@ led = Pin("LED", Pin.OUT)
 photoresistor = machine.ADC(Pin(27, Pin.IN))
 
 # Variables
-mqtt_client = MQTT()
+# mqtt_client = MQTT()
 
 
 # Reset the board
@@ -29,8 +29,11 @@ def led_toggle(value):
 
 
 def get_photoresistor_value():
+    # set a percentage value for the photoresistor
     photoresistor_value = photoresistor.read_u16() / 65535 * 100
-    print("Photoresistor value: ", "%.2f" % photoresistor_value ,"%")
+    photoresistor_percentage = "%.2f" % photoresistor_value
+    return photoresistor_percentage
+    
 
 # def send_data_to_endpoint(temperature, humidity):
 #     time.sleep(1)
@@ -60,18 +63,15 @@ def soil_sensor():
     seesaw = StemmaSoilSensor(i2c)
 
     # get moisture
-    moisture = seesaw.get_moisture()
-
-    # get temperature
-    temperature = seesaw.get_temp()
-    print("Moisture: ", moisture)
+    moisture = seesaw.get_moisture() / 20
+    return moisture
 
 def blink_sequence():
-    time.sleep(1)
+    time.sleep(0.5)
     led_toggle(1)
-    time.sleep(1)
+    time.sleep(0.5)
     led_toggle(0)
-    time.sleep(1)
+    time.sleep(0.5)
     led_toggle(1)
     time.sleep(2)
     led_toggle(0)   
@@ -80,11 +80,18 @@ def blink_sequence():
 def main():
     blink_sequence()
     # mqtt_client.connect()
-    get_photoresistor_value()
+    photo_percentage = get_photoresistor_value()
     dht_sensor()
-    soil_sensor()
+    moisture = soil_sensor()
+
+    print("Moisture: ", moisture , "%")
+    print("Photoresistor value: ", photo_percentage , "%")
 
 
 if __name__ == "__main__":
     while True:
-        main()
+        try:   
+            main()
+        except Exception as e:
+            print(f"Failed to run main: {e}")
+
