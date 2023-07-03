@@ -73,7 +73,7 @@ def blink_sequence():
     led_toggle(0)
     time.sleep(0.5)
     led_toggle(1)
-    time.sleep(2)
+    time.sleep(2.5)
     led_toggle(0)   
  
 # Main loop
