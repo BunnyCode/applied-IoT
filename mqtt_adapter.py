@@ -16,6 +16,7 @@ class MQTT:
         )
 
     def connect(self):
+        print("Conecting to %s MQTT broker" % (self.server))
         self.mqtt_client.connect()
 
     def publish(self, topic, message):

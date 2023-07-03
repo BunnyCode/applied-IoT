@@ -11,7 +11,7 @@ led = Pin("LED", Pin.OUT)
 photoresistor = machine.ADC(Pin(27, Pin.IN))
 
 # Variables
-# mqtt_client = MQTT()
+mqtt_client = MQTT()
 
 
 # Reset the board
@@ -35,16 +35,16 @@ def get_photoresistor_value():
     return photoresistor_percentage
     
 
-# def send_data_to_endpoint(temperature, humidity):
-#     time.sleep(1)
-#     sensor_data_temp_and_humidity = json.dumps({"feeds":{"temp": temperature, "humidity": humidity}})
-#     try:
-#         mqtt_client.publish(
-#             project_secrets.MQTT_PUBLISH_GROUP_T_H, str(sensor_data_temp_and_humidity)
-#         )
-#         print("pushed data")
-#     except Exception as e:
-#         print(f"Failed to publish message: {e}")
+def send_data_to_endpoint(temperature, humidity, moisture, photoresistor_percentage):
+    time.sleep(1)
+    sensor_data_temp_and_humidity = json.dumps({"feeds":{"temp": temperature, "humidity": humidity, "soil": moisture, "light": photoresistor_percentage}})
+    try:
+        mqtt_client.publish(
+            project_secrets.MQTT_PUBLISH_GROUP, str(sensor_data_temp_and_humidity)
+        )
+        print("pushed data")
+    except Exception as e:
+        print(f"Failed to publish message: {e}")
 
 
 # Read DHT11 sensor
@@ -52,8 +52,8 @@ def dht_sensor():
     import dht
     d = dht.DHT11(Pin(11))
     d.measure()
-    print("Temperature: ", d.temperature())
-    print("Humidity: ", d.humidity())
+    return d
+    
     # send_data_to_endpoint(d.temperature(), d.humidity())
 
 def soil_sensor():
@@ -80,15 +80,20 @@ def blink_sequence():
 def main():
     blink_sequence()
     # mqtt_client.connect()
-    photo_percentage = get_photoresistor_value()
-    dht_sensor()
+    light_precentage = get_photoresistor_value()
+    dht_values = dht_sensor()
     moisture = soil_sensor()
 
+    print("Temperature: ", dht_values.temperature())
+    print("Humidity: ", dht_values.humidity())
     print("Moisture: ", moisture , "%")
-    print("Photoresistor value: ", photo_percentage , "%")
+    print("Photoresistor value: ", light_precentage , "%")
+    send_data_to_endpoint(dht_values.temperature(), dht_values.humidity(), moisture, light_precentage)
 
 
 if __name__ == "__main__":
+    mqtt_client.connect()
+    print("Connected to MQTT broker")
     while True:
         try:   
             main()
