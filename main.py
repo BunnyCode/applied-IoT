@@ -9,8 +9,12 @@ from stemma_soil_sensor import StemmaSoilSensor
 Pin = machine.Pin
 led = Pin("LED", Pin.OUT)
 photoresistor = machine.ADC(Pin(27, Pin.IN))
+SDA_PIN = Pin(14)
+SCL_PIN = Pin(15)
 
 # Variables
+i2c = machine.I2C(1, sda=SDA_PIN, scl=SCL_PIN, freq=400000)
+seesaw = StemmaSoilSensor(i2c)
 mqtt_client = MQTT()
 
 
@@ -53,20 +57,13 @@ def dht_sensor():
     d = dht.DHT11(Pin(11))
     d.measure()
     return d
-    
-    # send_data_to_endpoint(d.temperature(), d.humidity())
+
 
 def soil_sensor():
-    SDA_PIN = Pin(14)
-    SCL_PIN = Pin(15)
-    i2c = machine.I2C(1, sda=SDA_PIN, scl=SCL_PIN, freq=400000)
-    seesaw = StemmaSoilSensor(i2c)
-
-    # get moisture
     moisture = seesaw.get_moisture() / 20
     return moisture
 
-def blink_sequence():
+def blink_sequence(): # Blink sequence an delay of cycles
     time.sleep(0.5)
     led_toggle(1)
     time.sleep(0.5)
