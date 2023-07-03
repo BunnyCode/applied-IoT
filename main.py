@@ -30,7 +30,7 @@ def led_toggle(value):
 
 def get_photoresistor_value():
     photoresistor_value = photoresistor.read_u16() / 65535 * 100
-    print("Photoresistor value: ", photoresistor_value ,"%")
+    print("Photoresistor value: ", "%.2f" % photoresistor_value ,"%")
 
 # def send_data_to_endpoint(temperature, humidity):
 #     time.sleep(1)
@@ -54,8 +54,8 @@ def dht_sensor():
     # send_data_to_endpoint(d.temperature(), d.humidity())
 
 def soil_sensor():
-    SDA_PIN = Pin(14) # update this
-    SCL_PIN = Pin(15) # update this
+    SDA_PIN = Pin(14)
+    SCL_PIN = Pin(15)
     i2c = machine.I2C(1, sda=SDA_PIN, scl=SCL_PIN, freq=400000)
     seesaw = StemmaSoilSensor(i2c)
 
@@ -64,7 +64,7 @@ def soil_sensor():
 
     # get temperature
     temperature = seesaw.get_temp()
-    print("", moisture)
+    print("Moisture: ", moisture)
 
 def blink_sequence():
     time.sleep(1)
